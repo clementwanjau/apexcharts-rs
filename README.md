@@ -7,7 +7,7 @@ This is a Rust WASM bindings for generating charts using the [ApexCharts](https:
 ## Usage
 ```toml
 [dependencies]
-apexcharts-rs = "0.1.0"
+apexcharts-rs = "0.1.3"
 ```
 and then in your code:
 
