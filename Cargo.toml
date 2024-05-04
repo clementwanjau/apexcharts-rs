@@ -1,7 +1,12 @@
 [package]
 name = "apexcharts-rs"
+description = "Rust WASM bindings for ApexCharts"
+authors = ["Clement Wanjau <clementwanjau@gmail.com>"]
 version = "0.1.0"
 edition = "2021"
+license = "Apache-2.0"
+license-file = "LICENSE"
+keywords = ["apexcharts", "wasm", "rust", "web"]
 
 
 [dependencies]
