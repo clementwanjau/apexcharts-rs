@@ -9,9 +9,6 @@ license-file = "LICENSE"
 keywords = ["apexcharts", "wasm", "rust", "web"]
 readme = "README.md"
 
-[lib]
-crate-type = ["cdylib"]
-
 [dependencies]
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 wasm-bindgen-futures = "0.4"
