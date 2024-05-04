@@ -1,5 +1,5 @@
 use std::fmt::Display;
-use serde_json::{to_string, to_string_pretty, Value};
+use serde_json::{to_string_pretty, Value};
 use wasm_bindgen::JsValue;
 
 /// Represents the options that can be passed to the ApexCharts constructor. This is a wrapper around
