@@ -205,7 +205,7 @@ impl From<ChartSeries> for JsValue {
 #[cfg(test)]
 mod tests {
 	use serde_json::Value;
-	use crate::{ChartOptions};
+	use crate::prelude::{ChartOptions, ChartType};
 
 	const OPTIONS_STR: &str = r#"
 	{
@@ -229,7 +229,7 @@ mod tests {
 	#[test]
 	pub fn test_setting_chart_type() {
 		let options = ChartOptions::from_string(String::from(OPTIONS_STR))
-			.set_chart_type(crate::ChartType::Bar);
+			.set_chart_type(ChartType::Bar);
 		let new_options = serde_json::from_str::<Value>(r#"
 		{
 			"chart": {
