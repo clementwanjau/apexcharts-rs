@@ -31209,7 +31209,7 @@
 
     SVG.extend(SVG.Element, {
       // Make element draggable
-      // Constraint might be an object (as described in readme.md) or a function in the form "function (x, y)" that gets called before every move.
+      // Constraint might be an object (as described in README.md) or a function in the form "function (x, y)" that gets called before every move.
       // The function can return a boolean or an object of the form {x, y}, to which the element will be moved. "False" skips moving, true moves to raw x, y.
       draggable: function(value, constraint) {
 
