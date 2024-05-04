@@ -9,9 +9,6 @@ use wasm_bindgen_futures::js_sys;
 ///
 /// ## Usage
 /// ```rust
-/// let options = apexcharts_rs::ChartOptions::from_file("path/to/options.json");
-///
-/// // or
 ///
 /// let options_str = r#"
 /// {
@@ -25,7 +22,7 @@ use wasm_bindgen_futures::js_sys;
 ///         }
 ///     ]
 /// }"#;
-/// let options = apexcharts_rs::ChartOptions::from_string(String::from(options_str));
+/// let options = apexcharts_rs::prelude::ChartOptions::from_string(String::from(options_str));
 /// ```
 #[derive(Clone, Debug)]
 pub struct ChartOptions {
@@ -47,8 +44,8 @@ impl ChartOptions {
 	///   }
 	/// ]
 	/// }"#;
-	/// let options = apexcharts_rs::ChartOptions::from_string(options_str);
-	/// let chart = apexcharts_rs::ApexChart::new(&options.into());
+	/// let options = apexcharts_rs::prelude::ChartOptions::from_string(String::from(options_str));
+	/// let chart = apexcharts_rs::prelude::ApexChart::new(&options.into());
 	/// ```
 	pub fn from_string(options: String) -> Self {
 		Self {
@@ -57,8 +54,23 @@ impl ChartOptions {
 	}
 	/// Create a new instance of ChartOptions from a json file.
 	/// ```rust
-	/// let options = apexcharts_rs::ChartOptions::from_file("path/to/options.json");
-	/// let chart = apexcharts_rs::ApexChart::new(&options.into());
+	/// let options_str = r#"
+	/// {
+	///    "chart": {
+	///       "type": "line"
+	///   },
+	///  "series": [
+	///    {
+	///       "name": "Series 1",
+	///       "data": [30, 40, 35, 50, 49, 125]
+	///   }
+	/// ]
+	/// }"#;
+	/// let filename = "options.json";
+	/// std::fs::write(filename, options_str).unwrap();
+	/// let options = apexcharts_rs::prelude::ChartOptions::from_file(filename);
+	/// let chart = apexcharts_rs::prelude::ApexChart::new(&options.into());
+	/// std::fs::remove_file(filename).unwrap();
 	/// ```
 	pub fn from_file(file_path: &str) -> Self {
 		// Read the file and return the content as a string
@@ -81,7 +93,7 @@ impl ChartOptions {
 
 impl From<ChartOptions> for JsValue {
 	fn from(options: ChartOptions) -> JsValue {
-		JsValue::from_str(&options.options)
+		JsValue::from_str(options.options.as_str())
 	}
 }
 
@@ -159,6 +171,9 @@ pub enum SeriesData {
 /// 
 /// ## Usage
 /// ```rust
+/// use apexcharts_rs::prelude::{ChartSeries, SeriesData, ChartOptions, ApexChart};
+/// use wasm_bindgen::prelude::*;
+/// 
 /// let series = vec![ChartSeries {
 ///    name: "Series 1".to_string(),
 ///    data: SeriesData::Single(vec![10.0, 20.0, 30.0]),
