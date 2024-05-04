@@ -1,6 +1,8 @@
 use std::fmt::Display;
+use serde::{Deserialize, Serialize};
 use serde_json::{to_string_pretty, Value};
 use wasm_bindgen::JsValue;
+use wasm_bindgen_futures::js_sys;
 
 /// Represents the options that can be passed to the ApexCharts constructor. This is a wrapper around
 /// the JSON object that ApexCharts expects.
@@ -134,6 +136,71 @@ impl Display for ChartType {
 	}
 }
 
+/// Represents the data that will be rendered in the chart.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub enum SeriesData {
+	/// Represents a single array of data points. eg `[10, 20, 30]`
+	Single(Vec<f64>),
+	/// Represents a double array of data points. eg `[(10, 20), (20, 30)]`
+	NumericPaired(Vec<(f64, f64)>),
+	/// Represents a double array of data points with a category. eg `[("Apple", 30), ("Banana", 40)]`
+	CategoryPaired(Vec<(String, f64)>),
+	/// Represents a double array of data points with a timestamp. eg `[(1619683200, 30), (1619769600, 40)]`
+	Timestamped(Vec<(u64, f64)>),
+	/// Represents a double array of data points with a date. eg `[("2021-04-29", 30), ("2021-04-30", 40)]`
+	Dated(Vec<(String, f64)>),
+}
+
+/// Represents a series in the chart.
+/// 
+/// This type is used to represent a series in the chart. It contains the name of the series, the data
+/// that will be rendered, the color of the series, the type of the series, and the z-index of the series.
+/// It is mostly used when you want to update the series in the chart dynamically.
+/// 
+/// ## Usage
+/// ```rust
+/// let series = vec![ChartSeries {
+///    name: "Series 1".to_string(),
+///    data: SeriesData::Single(vec![10.0, 20.0, 30.0]),
+///    color: "#ff0000".to_string(),
+///    r#type: Some("line".to_string()),
+///    z_index: Some(1),
+/// }];
+/// 
+/// let series_js: JsValue = series.into();
+/// 
+/// let options = ChartOptions::from_string(r#"
+///     {
+///       "chart": {
+///            "type": "line"
+///       },
+///       "series": []
+///     }"#.to_string());
+/// let chart = ApexChart::new(&options.into());
+/// // Render the chart first before updating the series.
+/// chart.render("chart-id");
+/// chart.update_series(&series_js, None);
+/// ```
+#[derive(Clone, Debug)]
+pub struct ChartSeries {
+	pub name: String,
+	pub data: SeriesData,
+	pub color: String,
+	pub r#type: Option<String>,
+	pub z_index: Option<i32>,
+}
+
+impl From<ChartSeries> for JsValue {
+	fn from(chart_series: ChartSeries) -> JsValue {
+		let series = js_sys::Object::new();
+		js_sys::Reflect::set(&series, &JsValue::from_str("name"), &JsValue::from_str(&chart_series.name)).unwrap();
+		js_sys::Reflect::set(&series, &JsValue::from_str("data"), &serde_wasm_bindgen::to_value(&chart_series.data).unwrap()).unwrap();
+		js_sys::Reflect::set(&series, &JsValue::from_str("color"), &JsValue::from_str(&chart_series.color)).unwrap();
+		js_sys::Reflect::set(&series, &JsValue::from_str("type"), &JsValue::from_str(&chart_series.r#type.unwrap_or("".to_string()))).unwrap();
+		js_sys::Reflect::set(&series, &JsValue::from_str("zIndex"), &JsValue::from_f64(chart_series.z_index.unwrap_or(0) as f64)).unwrap();
+		series.into()
+	}
+}
 
 #[cfg(test)]
 mod tests {
