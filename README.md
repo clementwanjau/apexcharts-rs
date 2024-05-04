@@ -12,7 +12,7 @@ apexcharts-rs = "0.1.3"
 and then in your code:
 
 ```rust
-use apexcharts_rs::ApexCharts;
+use apexcharts_rs::ApexChart;
 
 fn main() {
     let options = r#"
@@ -30,7 +30,7 @@ fn main() {
         }
     "#;
     let options = ChartOptions(String::from(options));
-    let chart = ApexCharts::new(&options.into());
+    let chart = ApexChart::new(&options.into());
     chart.render("chart_el_id");
 }
 ```
