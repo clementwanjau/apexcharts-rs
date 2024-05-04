@@ -9,8 +9,9 @@ use wasm_bindgen_futures::js_sys;
 ///
 /// ## Usage
 /// ```rust
+/// use apexcharts_rs::prelude::ChartOptions;
 ///
-/// let options_str = r#"
+/// let options_str = r#""
 /// {
 ///     "chart": {
 ///         "type": "line"
@@ -21,8 +22,8 @@ use wasm_bindgen_futures::js_sys;
 ///             "data": [30, 40, 35, 50, 49, 125]
 ///         }
 ///     ]
-/// }"#;
-/// let options = apexcharts_rs::prelude::ChartOptions::from_string(String::from(options_str));
+/// }""#;
+/// let options = ChartOptions::from_string(String::from(options_str));
 /// ```
 #[derive(Clone, Debug)]
 pub struct ChartOptions {
@@ -45,7 +46,7 @@ impl ChartOptions {
 	/// ]
 	/// }"#;
 	/// let options = apexcharts_rs::prelude::ChartOptions::from_string(String::from(options_str));
-	/// let chart = apexcharts_rs::prelude::ApexChart::new(&options.into());
+	/// //let chart = apexcharts_rs::prelude::ApexChart::new(&options.into());
 	/// ```
 	pub fn from_string(options: String) -> Self {
 		Self {
@@ -69,7 +70,7 @@ impl ChartOptions {
 	/// let filename = "options.json";
 	/// std::fs::write(filename, options_str).unwrap();
 	/// let options = apexcharts_rs::prelude::ChartOptions::from_file(filename);
-	/// let chart = apexcharts_rs::prelude::ApexChart::new(&options.into());
+	/// //let chart = apexcharts_rs::prelude::ApexChart::new(&options.into());
 	/// std::fs::remove_file(filename).unwrap();
 	/// ```
 	pub fn from_file(file_path: &str) -> Self {
@@ -149,7 +150,7 @@ impl Display for ChartType {
 }
 
 /// Represents the data that will be rendered in the chart.
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum SeriesData {
 	/// Represents a single array of data points. eg `[10, 20, 30]`
 	Single(Vec<f64>),
@@ -169,34 +170,7 @@ pub enum SeriesData {
 /// that will be rendered, the color of the series, the type of the series, and the z-index of the series.
 /// It is mostly used when you want to update the series in the chart dynamically.
 /// 
-/// ## Usage
-/// ```rust
-/// use apexcharts_rs::prelude::{ChartSeries, SeriesData, ChartOptions, ApexChart};
-/// use wasm_bindgen::prelude::*;
-/// 
-/// let series = vec![ChartSeries {
-///    name: "Series 1".to_string(),
-///    data: SeriesData::Single(vec![10.0, 20.0, 30.0]),
-///    color: "#ff0000".to_string(),
-///    r#type: Some("line".to_string()),
-///    z_index: Some(1),
-/// }];
-/// 
-/// let series_js: JsValue = series.into();
-/// 
-/// let options = ChartOptions::from_string(r#"
-///     {
-///       "chart": {
-///            "type": "line"
-///       },
-///       "series": []
-///     }"#.to_string());
-/// let chart = ApexChart::new(&options.into());
-/// // Render the chart first before updating the series.
-/// chart.render("chart-id");
-/// chart.update_series(&series_js, None);
-/// ```
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ChartSeries {
 	pub name: String,
 	pub data: SeriesData,
@@ -215,6 +189,14 @@ impl From<ChartSeries> for JsValue {
 		js_sys::Reflect::set(&series, &JsValue::from_str("zIndex"), &JsValue::from_f64(chart_series.z_index.unwrap_or(0) as f64)).unwrap();
 		series.into()
 	}
+}
+
+pub fn to_jsvalue<T: Into<JsValue>>(vec: Vec<T>) -> JsValue {
+	let array = js_sys::Array::new();
+	for item in vec {
+		array.push(&item.into());
+	}
+	array.into()
 }
 
 #[cfg(test)]

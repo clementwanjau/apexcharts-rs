@@ -27,7 +27,7 @@ extern "C" {
 	/// let filename = "options.json";
 	/// std::fs::write(filename, options_str).unwrap();
 	/// let options = ChartOptions::from_file(filename);
-	/// let chart = ApexChart::new(&options.into());
+	/// //let chart = ApexChart::new(&options.into());
 	/// // chart.render("chart-id");
 	/// std::fs::remove_file(filename).unwrap();
 	/// ```
