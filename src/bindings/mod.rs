@@ -10,15 +10,15 @@ extern "C" {
 	/// ## Usage
 	///
 	/// ```rust
-	/// use wasm_bindgen::JsValue;
-	/// use apexcharts_rs::ApexChart;
+	/// use apexcharts_rs::{ApexChart, ChartOptions};
 	///
-	/// let options = JsValue::NULL;
-	/// let chart = ApexChart::new(&options);
+	/// let options = ChartOptions::from_file("path/to/options.json");
+	/// let chart = ApexChart::new(&options.into());
 	/// chart.render("chart-id");
 	/// ```
 	pub type ApexChart;
 
+	/// Create a new instance of the `ApexChart` type.
 	#[wasm_bindgen(constructor)]
 	pub fn new(options: &JsValue) -> ApexChart;
 
