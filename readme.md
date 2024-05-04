@@ -1,4 +1,6 @@
 # Apexcharts-rs
+[![Crates.io](https://img.shields.io/crates/v/apexcharts-rs)](https://crates.io/crates/apexcharts-rs)
+[![Build](https://github.com/clementwanjau/apexcharts-rs/actions/workflows/build.yml/badge.svg)](https://github.com/clementwanjau/apexcharts-rs/actions/workflows/build.yml)
 
 This is a Rust WASM bindings for generating charts using the [ApexCharts](https://apexcharts.com/) JavaScript library.
 
@@ -33,6 +35,7 @@ fn main() {
 }
 ```
 
+## License
 
-License: MIT
+This project is licensed under the `Apache License 2.0` - see the [LICENSE](LICENSE) file for details
 
