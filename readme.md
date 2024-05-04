@@ -1,6 +1,6 @@
 # Apexcharts-rs
 [![Crates.io](https://img.shields.io/crates/v/apexcharts-rs)](https://crates.io/crates/apexcharts-rs)
-[![Build](https://github.com/clementwanjau/apexcharts-rs/actions/workflows/build.yml/badge.svg)](https://github.com/clementwanjau/apexcharts-rs/actions/workflows/build.yml)
+[![Build](https://github.com/clementwanjau/apexcharts-rs/actions/workflows/build.yml/badge.svg)](https://github.com/clementwanjau/apexcharts-rs/actions/workflows/build.yaml)
 
 This is a Rust WASM bindings for generating charts using the [ApexCharts](https://apexcharts.com/) JavaScript library.
 
