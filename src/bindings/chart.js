@@ -1,10 +1,12 @@
-import ApexCharts from "../../apexcharts/dist/apexcharts";
+// import ApexCharts from "../../apexcharts/dist/apexcharts";
 
 export class ApexChart {
     chart;
 
     constructor(options) {
-        this.options = options;
+        console.log("parsed_options", options);
+        let parsed_options = JSON.parse(options);
+        this.options = parsed_options;
     }
 
     update_series(series, animate) {

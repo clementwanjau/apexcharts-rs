@@ -202,6 +202,7 @@ pub fn to_jsvalue<T: Into<JsValue>>(vec: Vec<T>) -> JsValue {
 #[cfg(test)]
 mod tests {
 	use serde_json::Value;
+	use wasm_bindgen_test::wasm_bindgen_test;
 	use crate::prelude::{ChartOptions, ChartType};
 
 	const OPTIONS_STR: &str = r#"
@@ -217,13 +218,13 @@ mod tests {
 		]
 	}"#;
 	
-	#[test]
+	#[wasm_bindgen_test]
 	pub fn test_parsing_chart_options() {
 		let options = ChartOptions::from_string(String::from(OPTIONS_STR));
 		assert_eq!(options.options, OPTIONS_STR);
 	}
-	
-	#[test]
+
+	#[wasm_bindgen_test]
 	pub fn test_setting_chart_type() {
 		let options = ChartOptions::from_string(String::from(OPTIONS_STR))
 			.set_chart_type(ChartType::Bar);
@@ -241,8 +242,8 @@ mod tests {
 		}"#).unwrap();
 		assert_eq!(serde_json::from_str::<Value>(options.options.as_str()).unwrap(), new_options);
 	}
-	
-	#[test]
+
+	#[wasm_bindgen_test]
 	pub fn test_parsing_chart_options_from_file() {
 		let file_path = "options.json";
 		std::fs::write(file_path, OPTIONS_STR).unwrap();
