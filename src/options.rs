@@ -148,7 +148,6 @@ impl Display for ChartType {
 		}
 	}
 }
-
 /// Represents the data that will be rendered in the chart.
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub enum SeriesData {

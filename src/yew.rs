@@ -38,18 +38,18 @@ impl Component for ApexChartComponent {
 		}
 	}
 
-	fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
+	fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
 		match msg {
 			ApexChartComponentMsg::DrawChart => {
-				self.chart.render("chart");
+				self.chart.render(&ctx.props().id.clone());
 				true
 			}
 		}
 	}
 
-	fn view(&self, _ctx: &Context<Self>) -> Html {
+	fn view(&self, ctx: &Context<Self>) -> Html {
 		html! {
-            <div id="chart"></div>
+            <div id={ctx.props().id.clone()}></div>
         }
 	}
 }
