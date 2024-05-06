@@ -1,6 +1,5 @@
 use wasm_bindgen::JsValue;
 use gloo::timers::callback::Timeout;
-use web_sys::console;
 use yew::prelude::*;
 use crate::prelude::ApexChart;
 
@@ -33,7 +32,6 @@ impl Component for ApexChartComponent {
 			})
 		};
 		let props = ctx.props().clone();
-		// console::log_1(&props.options);
 		Self {
 			chart: ApexChart::new(&props.options),
 			draw_timeout: stand_alone_timer,
