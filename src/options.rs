@@ -74,8 +74,9 @@ pub enum SeriesData {
 	Timestamped(Vec<(i64, i64)>),
 	/// Represents a double array of data points with a date. eg `[("2021-04-29", 30), ("2021-04-30", 40)]`
 	Dated(Vec<(String, i64)>),
+	/// Represents a double array of data points which is a percentage adding up to 100. eg `[("Apple", 30.0), ("Banana", 40.0), ("Orange", 30.0)]`. It is used primarily for the `Pie`, `Donut`, and `Radial` chart types.
+	Radial(Vec<(String, f64)>),
 }
-
 
 impl Serialize for SeriesData {
 	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -136,6 +137,21 @@ impl Serialize for SeriesData {
 					seq.serialize_element(&item)?;
 				}
 				seq.end()
+			},
+			SeriesData::Radial(data) => {
+				let mut seq = serializer.serialize_seq(Some(data.len()))?;
+				let data: Vec<IndexMap<String, serde_json::Value>> = data.iter().map(|(x, y)| {
+					IndexMap::from_iter(
+						vec![
+							("x".to_string(), Value::String(x.to_string())),
+							("y".to_string(), Value::Number(serde_json::Number::from_f64(*y).unwrap()))
+						]
+					)
+				}).collect::<Vec<_>>();
+				for item in data {
+					seq.serialize_element(&item)?;
+				}
+				seq.end()
 			}
 		}
 	}
@@ -185,7 +201,7 @@ pub fn to_jsvalue<T: Into<JsValue>>(vec: Vec<T>) -> JsValue {
 #[cfg(test)]
 mod tests {
 	use crate::prelude::SeriesData;
-	
+
 	#[test]
 	pub fn test_series_data_serialization() {
 		let single_data = serde_json::to_string(&SeriesData::Single(vec![10, 20, 30])).unwrap();
@@ -203,5 +219,5 @@ mod tests {
 		let dated_data = serde_json::to_string(&SeriesData::Dated(vec![("2021-04-29".to_string(), 30), ("2021-04-30".to_string(), 40)])).unwrap();
 		assert_eq!(dated_data, r#"[{"x":"2021-04-29","y":30},{"x":"2021-04-30","y":40}]"#);
 	}
-	
+
 }

@@ -2,7 +2,7 @@ use wasm_bindgen::JsValue;
 use gloo::timers::callback::Timeout;
 use serde_json::Value;
 use yew::prelude::*;
-use crate::prelude::{ApexChart, ChartSeries, ChartType};
+use crate::prelude::{ApexChart, ChartSeries, ChartType, SeriesData};
 
 pub struct ApexChartComponent {
 	chart: ApexChart,
@@ -40,6 +40,25 @@ impl Component for ApexChartComponent {
 			})
 		};
 		let props = ctx.props().clone();
+		let mut labels_data = None;
+		let series_data = match props.r#type {
+			ChartType::Pie | ChartType::Donut | ChartType::RadialBar => {
+				let chart_serie = props.series.first().unwrap();
+				match chart_serie.data {
+					SeriesData::Radial(ref data) => {
+						let data_values = data.iter().map(|(_, y)| *y).collect::<Vec<_>>();
+						labels_data = Some(data.iter().map(|(x, _)| x.clone()).collect::<Vec<_>>());
+						serde_json::to_value(data_values).unwrap()
+					},
+					_=> {
+						serde_json::to_value(&props.series).unwrap()
+					}
+				}
+			},
+			_=> {
+				serde_json::to_value(&props.series).unwrap()
+			}
+		};
 		let options = if props.options.is_empty() {
 			format!(
 				r#"{{
@@ -49,18 +68,27 @@ impl Component for ApexChartComponent {
 					"height": "{}"
 				}},
 				"series": {}
+				{}
 			}}"#,
 				props.r#type,
 				props.width,
 				props.height,
-				serde_json::to_string(&props.series).unwrap()
+				series_data,
+				if let Some(labels) = labels_data {
+					format!(r#","labels": {}"#, serde_json::to_string(&labels).unwrap())
+				} else {
+					"".to_string()
+				}
 			)
 		} else {
 			let mut options = serde_json::from_str::<serde_json::Value>(&props.options).unwrap();
 			options["chart"]["type"] = Value::String(props.r#type.to_string());
 			options["chart"]["width"] = Value::String(props.width.clone());
 			options["chart"]["height"] = Value::String(props.height.clone());
-			options["series"] = serde_json::to_value(&props.series).unwrap();
+			options["series"] = series_data;
+			if let Some(labels) = labels_data {
+				options["labels"] = Value::Array(labels.iter().map(|label| Value::String(label.clone())).collect());
+			}
 			serde_json::to_string(&options).unwrap()
 		};
 		Self {
