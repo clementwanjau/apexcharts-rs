@@ -4,6 +4,14 @@
 
 This is a Rust WASM bindings for generating charts using the [ApexCharts](https://apexcharts.com/) JavaScript library. The library provides components for creating charts with the `yew` framework. ApexCharts is a modern open source charting library that helps developers to create beautiful and interactive visualizations for web pages.
 
+## Browsers support
+
+| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/> Edge | [<img src="https://user-images.githubusercontent.com/17712401/124668393-30772d00-de87-11eb-9360-3199c3b68b95.png" alt="IE" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/> IE11 |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 31+ ✔                                                                                                                                                                                                             | 35+ ✔                                                                                                                                                                                                         | 6+ ✔                                                                                                                                                                                                          | Edge ✔                                                                                                                                                                                                 | [(IE11)](#using-it-with-ie11) ✔                                                                                                                                                                  |
+
+
+
 ## Usage
 ```toml
 [dependencies]
@@ -11,11 +19,11 @@ apexcharts-rs = {version="0.1", features=["yew-component"]}
 ```
 and then in your code:
 
-```ignorelang
+```rust
 use yew::prelude::*;
 use apexcharts_rs::prelude::{ApexChartComponent, ChartType, ChartSeries, SeriesData};
 
-#[function_component(ApexChart)]
+#[function_component]
 fn MyApp() -> Html {
     // This is the data to chart. The data is a vector of `ChartSeries` 
     // which contains the name of the series, the data points, color, type 
