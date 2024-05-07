@@ -1,5 +1,7 @@
+use indexmap::IndexMap;
 use std::fmt::Display;
 use serde::{Deserialize, Serialize};
+use serde::ser::{SerializeSeq};
 use serde_json::{to_string_pretty, Value};
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::js_sys;
@@ -105,6 +107,7 @@ impl Display for ChartOptions {
 }
 
 /// Represents the type of the chart that will be rendered.
+#[derive(Clone, Debug, PartialEq)]
 pub enum ChartType {
 	Area,
 	Bar,
@@ -149,18 +152,84 @@ impl Display for ChartType {
 	}
 }
 /// Represents the data that will be rendered in the chart.
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Deserialize, PartialEq)]
 pub enum SeriesData {
 	/// Represents a single array of data points. eg `[10, 20, 30]`
-	Single(Vec<f64>),
+	Single(Vec<i64>),
 	/// Represents a double array of data points. eg `[(10, 20), (20, 30)]`
-	NumericPaired(Vec<(f64, f64)>),
+	NumericPaired(Vec<(i64, i64)>),
 	/// Represents a double array of data points with a category. eg `[("Apple", 30), ("Banana", 40)]`
-	CategoryPaired(Vec<(String, f64)>),
+	CategoryPaired(Vec<(String, i64)>),
 	/// Represents a double array of data points with a timestamp. eg `[(1619683200, 30), (1619769600, 40)]`
-	Timestamped(Vec<(u64, f64)>),
+	Timestamped(Vec<(i64, i64)>),
 	/// Represents a double array of data points with a date. eg `[("2021-04-29", 30), ("2021-04-30", 40)]`
-	Dated(Vec<(String, f64)>),
+	Dated(Vec<(String, i64)>),
+}
+
+
+impl Serialize for SeriesData {
+	fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+		where
+			S: serde::Serializer,
+	{
+		match self {
+			SeriesData::Single(data) => {
+				let mut seq = serializer.serialize_seq(Some(data.len()))?;
+				for item in data {
+					seq.serialize_element(item)?;
+				}
+				seq.end()
+			}
+			SeriesData::NumericPaired(data) => {
+				let mut seq = serializer.serialize_seq(Some(data.len()))?;
+				let data = data.iter().map(|(x, y)| vec![*x, *y]).collect::<Vec<_>>();
+				for item in data {
+					seq.serialize_element(&item)?;
+				}
+				seq.end()
+			}
+			SeriesData::CategoryPaired(data) => {
+				// Serialize the data into a sequence of an object with two properties `x` and `y`. eg `[{x: "Apple", y: 30}, {x: "Banana", y: 40}]`
+				let mut seq = serializer.serialize_seq(Some(data.len()))?;
+				let data: Vec<IndexMap<String, serde_json::Value>> = data.iter().map(|(x, y)| {
+					IndexMap::from_iter(
+						vec![
+							("x".to_string(), Value::String(x.to_string())), 
+							("y".to_string(), Value::Number(serde_json::Number::from(*y)))
+						]
+					)
+				}).collect::<Vec<_>>();
+				for item in data {
+					seq.serialize_element(&item)?;
+				}
+				seq.end()
+			}
+			SeriesData::Timestamped(data) => {
+				let mut seq = serializer.serialize_seq(Some(data.len()))?;
+				let data = data.iter().map(|(x, y)| vec![*x, *y]).collect::<Vec<_>>();
+				for item in data {
+					seq.serialize_element(&item)?;
+				}
+				seq.end()
+			}
+			SeriesData::Dated(data) => {
+				let mut seq = serializer.serialize_seq(Some(data.len()))?;
+				let data: Vec<IndexMap<String, serde_json::Value>> = data.iter().map(|(x, y)| {
+					IndexMap::from_iter(
+						vec![
+							("x".to_string(), Value::String(x.to_string())),
+							("y".to_string(), Value::Number(serde_json::Number::from(*y)))
+						]
+					)
+				}).collect::<Vec<_>>();
+				for item in data {
+					seq.serialize_element(&item)?;
+				}
+				seq.end()
+			}
+		}
+	}
+
 }
 
 /// Represents a series in the chart.
@@ -202,7 +271,7 @@ pub fn to_jsvalue<T: Into<JsValue>>(vec: Vec<T>) -> JsValue {
 mod tests {
 	use serde_json::Value;
 	use wasm_bindgen_test::wasm_bindgen_test;
-	use crate::prelude::{ChartOptions, ChartType};
+	use crate::prelude::{ChartOptions, ChartType, SeriesData};
 
 	const OPTIONS_STR: &str = r#"
 	{
@@ -249,5 +318,23 @@ mod tests {
 		let options = ChartOptions::from_file(file_path);
 		assert_eq!(options.options, OPTIONS_STR);
 		std::fs::remove_file(file_path).unwrap();
+	}
+	
+	#[test]
+	pub fn test_series_data_serialization() {
+		let single_data = serde_json::to_string(&SeriesData::Single(vec![10, 20, 30])).unwrap();
+		assert_eq!(single_data, "[10,20,30]");
+
+		let numeric_paired_data = serde_json::to_string(&SeriesData::NumericPaired(vec![(10, 20), (20, 30)])).unwrap();
+		assert_eq!(numeric_paired_data, "[[10,20],[20,30]]");
+
+		let category_paired_data = serde_json::to_string(&SeriesData::CategoryPaired(vec![("Apple".to_string(), 30), ("Banana".to_string(), 40)])).unwrap();
+		assert_eq!(category_paired_data, r#"[{"x":"Apple","y":30},{"x":"Banana","y":40}]"#);
+
+		let timestamped_data = serde_json::to_string(&SeriesData::Timestamped(vec![(1619683200, 30), (1619769600, 40)])).unwrap();
+		assert_eq!(timestamped_data, "[[1619683200,30],[1619769600,40]]");
+
+		let dated_data = serde_json::to_string(&SeriesData::Dated(vec![("2021-04-29".to_string(), 30), ("2021-04-30".to_string(), 40)])).unwrap();
+		assert_eq!(dated_data, r#"[{"x":"2021-04-29","y":30},{"x":"2021-04-30","y":40}]"#);
 	}
 }

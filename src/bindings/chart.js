@@ -1,10 +1,10 @@
-// import ApexCharts from "../../apexcharts/dist/apexcharts";
+// import ApexCharts from "apexcharts";
 
 export class ApexChart {
     chart;
 
     constructor(options) {
-        console.log("parsed_options", options);
+        console.log(options);
         let parsed_options = JSON.parse(options);
         this.options = parsed_options;
     }

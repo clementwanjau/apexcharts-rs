@@ -1,7 +1,7 @@
 use wasm_bindgen::JsValue;
 use gloo::timers::callback::Timeout;
 use yew::prelude::*;
-use crate::prelude::ApexChart;
+use crate::prelude::{ApexChart, ChartSeries, ChartType};
 
 pub struct ApexChartComponent {
 	chart: ApexChart,
@@ -14,9 +14,16 @@ pub enum ApexChartComponentMsg {
 
 #[derive(Clone, Debug, Properties, PartialEq)]
 pub struct ApexChartComponentProps {
-	pub options: JsValue,
+	#[prop_or(ChartType::Line)]
+	pub r#type: ChartType,
+	#[prop_or("".into())]
+	pub options: String,
 	pub id: String,
-	//pub data: Option<Vec<SeriesData>>
+	pub series: Vec<ChartSeries>,
+	#[prop_or("100%".to_string())]
+	pub width: String,
+	#[prop_or("auto".to_string())]
+	pub height: String,
 }
 
 impl Component for ApexChartComponent {
@@ -32,8 +39,28 @@ impl Component for ApexChartComponent {
 			})
 		};
 		let props = ctx.props().clone();
+		let options = format!(
+			r#"{{
+				"chart": {{
+					"type": "{}",
+					"width": "{}",
+					"height": "{}"
+				}},
+				"series": {}
+				{}
+			}}"#,
+			props.r#type,
+			props.width,
+			props.height,
+			serde_json::to_string(&props.series).unwrap(),
+			if props.options.is_empty() {
+				"".to_string()
+			} else {
+				format!(",{}", props.options)
+			}
+		);
 		Self {
-			chart: ApexChart::new(&props.options),
+			chart: ApexChart::new(&JsValue::from_str(&options)),
 			draw_timeout: stand_alone_timer,
 		}
 	}
