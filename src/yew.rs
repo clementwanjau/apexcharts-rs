@@ -1,11 +1,12 @@
 use wasm_bindgen::JsValue;
 use gloo::timers::callback::Timeout;
+use serde_json::Value;
 use yew::prelude::*;
 use crate::prelude::{ApexChart, ChartSeries, ChartType};
 
 pub struct ApexChartComponent {
 	chart: ApexChart,
-	draw_timeout: Timeout,
+	_draw_timeout: Timeout,
 }
 
 pub enum ApexChartComponentMsg {
@@ -39,29 +40,32 @@ impl Component for ApexChartComponent {
 			})
 		};
 		let props = ctx.props().clone();
-		let options = format!(
-			r#"{{
+		let options = if props.options.is_empty() {
+			format!(
+				r#"{{
 				"chart": {{
 					"type": "{}",
 					"width": "{}",
 					"height": "{}"
 				}},
 				"series": {}
-				{}
 			}}"#,
-			props.r#type,
-			props.width,
-			props.height,
-			serde_json::to_string(&props.series).unwrap(),
-			if props.options.is_empty() {
-				"".to_string()
-			} else {
-				format!(",{}", props.options)
-			}
-		);
+				props.r#type,
+				props.width,
+				props.height,
+				serde_json::to_string(&props.series).unwrap()
+			)
+		} else {
+			let mut options = serde_json::from_str::<serde_json::Value>(&props.options).unwrap();
+			options["chart"]["type"] = Value::String(props.r#type.to_string());
+			options["chart"]["width"] = Value::String(props.width.clone());
+			options["chart"]["height"] = Value::String(props.height.clone());
+			options["series"] = serde_json::to_value(&props.series).unwrap();
+			serde_json::to_string(&options).unwrap()
+		};
 		Self {
 			chart: ApexChart::new(&JsValue::from_str(&options)),
-			draw_timeout: stand_alone_timer,
+			_draw_timeout: stand_alone_timer,
 		}
 	}
 
