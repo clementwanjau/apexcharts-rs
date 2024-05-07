@@ -19,7 +19,7 @@ apexcharts-rs = {version="0.1", features=["yew-component"]}
 ```
 and then in your code:
 
-```rust
+```rust,ignore
 use yew::prelude::*;
 use apexcharts_rs::prelude::{ApexChartComponent, ChartType, ChartSeries, SeriesData};
 
