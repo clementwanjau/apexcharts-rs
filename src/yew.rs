@@ -4,6 +4,71 @@ use serde_json::Value;
 use yew::prelude::*;
 use crate::prelude::{ApexChart, ChartSeries, ChartType, SeriesData};
 
+/// An ApexCharts component for Yew. 
+/// 
+/// This component is used to render an ApexCharts chart in a Yew application. It is used to render different types of charts
+/// such as line, bar, pie, donut, and radial bar charts. To use this component, you need to enable the `yew-component` feature
+/// in the `apexcharts-rs` crate. 
+/// 
+/// 
+/// # Example
+/// 
+/// ```rust
+/// use yew::prelude::*;
+/// 
+/// use apexcharts_rs::prelude::{ApexChartComponent, ApexChartComponentProps, ChartSeries, SeriesData};
+/// 
+/// pub struct App {
+///    link: ComponentLink<Self>,
+/// }
+/// 
+/// pub enum AppMsg {
+///   Noop
+/// }
+/// 
+/// impl Component for App {
+///     type Message = AppMsg;
+///     type Properties = ();
+/// 
+///     fn create(ctx: &Context<Self>) -> Self {
+///         Self {
+///            link: ctx.link()
+///         }
+///     }
+///     
+///     fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
+///         true
+///     }
+///     
+///     fn view(&self, _ctx: &Context<Self>) -> Html {
+///         let series = vec![
+///             ChartSeries {
+///                 name: "Series 1".to_string(),
+///                 data: SeriesData::Linear(vec![10.0, 20.0, 30.0, 40.0, 50.0]),
+///                 color: "#008FFB".to_string(),
+///                 r#type: None,
+///                 z_index: None,
+///             },
+///             ChartSeries {
+///                 name: "Series 2".to_string(),
+///                 data: SeriesData::Linear(vec![30.0, 40.0, 50.0, 60.0, 70.0]),
+///                 color: "#00E396".to_string(),
+///                 r#type: None,
+///                 z_index: None,
+///             }
+///         ];
+///     
+///     	html! {
+///     		<ApexChartComponent
+///     			id="chart"
+///     			r#type=ChartType::Line
+///     			series=series
+///     			width="100%"
+///     			height="300px"
+///     		/>
+///     	}
+/// }
+/// 
 pub struct ApexChartComponent {
 	chart: ApexChart,
 	_draw_timeout: Timeout,
