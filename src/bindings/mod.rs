@@ -6,31 +6,6 @@ extern "C" {
 	/// Once created using the `new()` method, the chart should be rendered on the page using the 
 	/// `render()` method before performing any other operations. Failure to do so will result in
 	/// the subsequent operations not doing anything.
-	///
-	/// ## Usage
-	///
-	/// ```rust
-	/// use apexcharts_rs::prelude::{ApexChart, ChartOptions};
-	/// 
-	/// let options_str = r#"
-	/// {
-	///    "chart": {
-	///       "type": "line"
-	///   },
-	///  "series": [
-	///    {
-	///       "name": "Series 1",
-	///       "data": [30, 40, 35, 50, 49, 125]
-	///   }
-	/// ]
-	/// }"#;
-	/// let filename = "options.json";
-	/// std::fs::write(filename, options_str).unwrap();
-	/// let options = ChartOptions::from_file(filename);
-	/// //let chart = ApexChart::new(&options.into());
-	/// // chart.render("chart-id");
-	/// std::fs::remove_file(filename).unwrap();
-	/// ```
 	pub type ApexChart;
 
 	/// Create a new instance of the `ApexChart` type.

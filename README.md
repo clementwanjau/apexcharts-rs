@@ -11,9 +11,9 @@ apexcharts-rs = {version="0.1", features=["yew-component"]}
 ```
 and then in your code:
 
-```rust
+```ignorelang
 use yew::prelude::*;
-use apexcharts_rs::{ApexChartComponent, ChartType, ChartSeries, SeriesData};
+use apexcharts_rs::prelude::{ApexChartComponent, ChartType, ChartSeries, SeriesData};
 
 #[function_component(ApexChart)]
 fn MyApp() -> Html {
@@ -125,7 +125,7 @@ To combine multiple series in a single chart, you can add more `ChartSeries` to 
 ## Series Data
 The `SeriesData` enum is used to represent the data points for the chart. The data points can be a single value or a tuple of two values. The data points can be represented as follows:
 ```
-use apexcharts_rs::SeriesData;
+use apexcharts_rs::prelude::SeriesData;
 
 let data = SeriesData::Single(vec![6500, 6418, 6456, 6526, 6356, 6456]);
 
