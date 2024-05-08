@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "leptos-chart",
     "yew-chart"
 ]
 resolver = "2"

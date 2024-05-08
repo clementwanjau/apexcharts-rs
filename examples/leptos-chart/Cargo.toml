@@ -1,0 +1,10 @@
+[package]
+name = "leptos-chart"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+apexcharts-rs = { path="../../../apexcharts-rs", features = ["leptos"] }
+leptos = { version = "0.6.11", features= ["csr"] }
+wasm-bindgen = "0.2.92"
