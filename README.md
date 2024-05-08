@@ -2,110 +2,205 @@
 [![Crates.io](https://img.shields.io/crates/v/apexcharts-rs)](https://crates.io/crates/apexcharts-rs)
 [![Build](https://github.com/clementwanjau/apexcharts-rs/actions/workflows/build.yaml/badge.svg)](https://github.com/clementwanjau/apexcharts-rs/actions/workflows/build.yaml)
 
-This is a Rust WASM bindings for generating charts using the [ApexCharts](https://apexcharts.com/) JavaScript library. The library provides components for creating charts with the `yew` framework. ApexCharts is a modern open source charting library that helps developers to create beautiful and interactive visualizations for web pages.
+This is a Rust WASM bindings for generating charts using the [ApexCharts](https://apexcharts.com/) JavaScript library. The library provides components for creating charts with the `yew` and `leptos` frameworks. ApexCharts is a modern open source charting library that helps developers to create beautiful and interactive visualizations for web pages.
 
 ## Browsers support
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/>Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/> Edge | [<img src="https://user-images.githubusercontent.com/17712401/124668393-30772d00-de87-11eb-9360-3199c3b68b95.png" alt="IE" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br/> IE11 |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 31+ ✔                                                                                                                                                                                                             | 35+ ✔                                                                                                                                                                                                         | 6+ ✔                                                                                                                                                                                                          | Edge ✔                                                                                                                                                                                                 | [(IE11)](#using-it-with-ie11) ✔                                                                                                                                                                  |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 31+ ✔                                                                                                                                                                                                             | 35+ ✔                                                                                                                                                                                                         | 6+ ✔                                                                                                                                                                                                          | Edge ✔                                                                                                                                                                                                 | [(IE11)](https://github.com/apexcharts/apexcharts.js?tab=readme-ov-file#using-it-with-ie11) ✔                                                                                                                         |
 
 
 
 ## Usage
-```toml
-[dependencies]
-apexcharts-rs = {version="0.1", features=["yew-component"]}
-```
-and then in your code:
-
-```rust,ignore
-use yew::prelude::*;
-use apexcharts_rs::prelude::{ApexChartComponent, ChartType, ChartSeries, SeriesData};
-
-#[function_component]
-fn MyApp() -> Html {
-    // This is the data to chart. The data is a vector of `ChartSeries` 
-    // which contains the name of the series, the data points, color, type 
-    // and z-index. Note that different charts require different data types. 
-    let series = vec![
-        ChartSeries {
-            name: "New users".to_string(),
-            data: SeriesData::Single(vec![6500, 6418, 6456, 6526, 6356, 6456]),
-            color: "#1A56DB".to_string(),
-            r#type: None,
-            z_index: None,
-        }
-    ];
+The components can be exposed for use by enabling features depending on the framework in use.
+- ### Yew
+    ```toml
+    [dependencies]
+    apexcharts-rs = {version="0.1", features=["yew"]}
+    ```
+    and then in your code:
     
-    // Options to further configure how the chart looks. Kindly refer to the ApexCharts documentation for more options.
-    let raw_options = json!({
-      "chart": {
-        "fontFamily": "Inter, sans-serif",
-        "dropShadow": {
-          "enabled": false
-        },
-        "toolbar": {
-          "show": false
+    ```rust,ignore
+    use yew::prelude::*;
+    use apexcharts_rs::prelude::{ApexChartComponent, ChartType, ChartSeries, SeriesData};
+    
+    #[function_component]
+    fn MyApp() -> Html {
+        // This is the data to chart. The data is a vector of `ChartSeries` 
+        // which contains the name of the series, the data points, color, type 
+        // and z-index. Note that different charts require different data types. 
+        let series = vec![
+            ChartSeries {
+                name: "New users".to_string(),
+                data: SeriesData::Single(vec![6500, 6418, 6456, 6526, 6356, 6456]),
+                color: "#1A56DB".to_string(),
+                r#type: None,
+                z_index: None,
+            }
+        ];
+        
+        // Options to further configure how the chart looks. Kindly refer to the ApexCharts documentation for more options.
+        let raw_options = r##"{
+          "chart": {
+            "fontFamily": "Inter, sans-serif",
+            "dropShadow": {
+              "enabled": false
+            },
+            "toolbar": {
+              "show": false
+            }
+          },
+          "xaxis": {
+            "categories": ["01 February", "02 February", "03 February", "04 February", "05 February", "06 February", "07 February"],
+            "labels": {
+              "show": false
+            },
+            "axisBorder": {
+              "show": false
+            },
+            "axisTicks": {
+              "show": false
+            }
+          },
+            "yaxis": {
+                "show": false
+            },
+            "legend": {
+                "show": false
+            },
+          "stroke": {
+            "width": 6,
+            "curve": "smooth"
+          },
+          "grid": {
+            "show": true,
+            "strokeDashArray": 4,
+            "padding": {
+              "left": 2,
+              "right": 2,
+              "top": 0
+            }
+          },
+          "dataLabels": {
+            "enabled": false
+          },
+          "tooltip": {
+            "enabled": true,
+            "x": {
+              "show": false
+            }
+          }
+        }"##;
+    
+        html! {
+            <div>
+                <ApexChartComponent
+                    options={raw_options.to_string()}
+                    r#type={ChartType::Area}
+                    id={"chart1".to_string()}
+                    series={series.clone()}
+                />
+            </div>
         }
-      },
-      "xaxis": {
-        "categories": ["01 February", "02 February", "03 February", "04 February", "05 February", "06 February", "07 February"],
-        "labels": {
-          "show": false
-        },
-        "axisBorder": {
-          "show": false
-        },
-        "axisTicks": {
-          "show": false
-        }
-      },
-        "yaxis": {
-            "show": false
-        },
-        "legend": {
-            "show": false
-        },
-      "stroke": {
-        "width": 6,
-        "curve": "smooth"
-      },
-      "grid": {
-        "show": true,
-        "strokeDashArray": 4,
-        "padding": {
-          "left": 2,
-          "right": 2,
-          "top": 0
-        }
-      },
-      "dataLabels": {
-        "enabled": false
-      },
-      "tooltip": {
-        "enabled": true,
-        "x": {
-          "show": false
-        }
-      }
-    });
-
-    html! {
-        <div>
-            <ApexChartComponent
-                options={raw_options.to_string()}
-                r#type={ChartType::Area}
-                id={"chart1".to_string()}
-                series={series.clone()}
-            />
-        </div>
     }
-}
-```
+    ```
+
+- ### Leptos
+    ```toml
+    [dependencies]
+    apexcharts-rs = { version="0.1", features=["leptos"] }
+    ```
+    and then in your code:
+
+    ```rust,ignore
+    use leptos::*;
+    use apexcharts_rs::prelude::{ApexChartComponent, ChartType, ChartSeries, SeriesData};
+    
+    #[component]
+    fn MyApp() -> impl IntoView {
+        // This is the data to chart. The data is a vector of `ChartSeries` 
+        // which contains the name of the series, the data points, color, type 
+        // and z-index. Note that different charts require different data types. 
+        let series = vec![
+            ChartSeries {
+                name: "New users".to_string(),
+                data: SeriesData::Single(vec![6500, 6418, 6456, 6526, 6356, 6456]),
+                color: "#1A56DB".to_string(),
+                r#type: None,
+                z_index: None,
+            }
+        ];
+        
+        // Options to further configure how the chart looks. Kindly refer to the ApexCharts documentation for more options.
+        let raw_options = r##"{
+          "chart": {
+            "fontFamily": "Inter, sans-serif",
+            "dropShadow": {
+              "enabled": false
+            },
+            "toolbar": {
+              "show": false
+            }
+          },
+          "xaxis": {
+            "categories": ["01 February", "02 February", "03 February", "04 February", "05 February", "06 February", "07 February"],
+            "labels": {
+              "show": false
+            },
+            "axisBorder": {
+              "show": false
+            },
+            "axisTicks": {
+              "show": false
+            }
+          },
+            "yaxis": {
+                "show": false
+            },
+            "legend": {
+                "show": false
+            },
+          "stroke": {
+            "width": 6,
+            "curve": "smooth"
+          },
+          "grid": {
+            "show": true,
+            "strokeDashArray": 4,
+            "padding": {
+              "left": 2,
+              "right": 2,
+              "top": 0
+            }
+          },
+          "dataLabels": {
+            "enabled": false
+          },
+          "tooltip": {
+            "enabled": true,
+            "x": {
+              "show": false
+            }
+          }
+        }"##;
+        let (series, _) = create_signal(series);
+    
+        view! {
+            <div>
+                <ApexChartComponent
+                    options={raw_options.to_string()}
+                    r#type={ChartType::Area}
+                    id={"chart1".to_string()}
+                    series={series}
+                />
+            </div>
+        }
+    }
+    ```
 
 
-This code will render the following chart:
+The above code will render the following chart:
 
 ![Area Chart](./assets/area_chart.png)
 
@@ -132,7 +227,7 @@ To combine multiple series in a single chart, you can add more `ChartSeries` to 
 
 ## Series Data
 The `SeriesData` enum is used to represent the data points for the chart. The data points can be a single value or a tuple of two values. The data points can be represented as follows:
-```
+```rust,ignore
 use apexcharts_rs::prelude::SeriesData;
 
 let data = SeriesData::Single(vec![6500, 6418, 6456, 6526, 6356, 6456]);
@@ -169,5 +264,5 @@ For more examples check the [examples](./examples) directory.
 
 ## License
 
-This project is licensed under the `Apache License 2.0` and `MIT` license - see the [LICENSE](LICENSE) file for details
+This project is licensed under the `Apache License 2.0` - see the [LICENSE](LICENSE) file for details
 
