@@ -3,7 +3,7 @@
 mod options;
 mod bindings;
 
-#[cfg(feature = "yew-component")]
+#[cfg(feature = "yew")]
 mod yew;
 
 pub mod prelude {

@@ -7,7 +7,7 @@ version = "0.1.4"
 edition = "2021"
 license = "Apache-2.0 or MIT"
 keywords = ["apexcharts", "wasm", "rust", "web"]
-categories = ["wasm", "web-programming", "data-visualization"]
+categories = ["wasm", "web-programming", "visualization"]
 readme = "README.md"
 
 [lib]
@@ -15,7 +15,7 @@ crate-type = ["cdylib", "rlib"]
 
 [features]
 default = []
-yew-component = ["yew", "gloo"]
+yew = ["dep:yew"]
 
 [dependencies]
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
