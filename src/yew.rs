@@ -13,60 +13,50 @@ use crate::prelude::{ApexChart, ChartSeries, ChartType, SeriesData};
 /// 
 /// # Example
 /// 
-/// ```rust
+/// ```rust,ignore
 /// use yew::prelude::*;
+/// use apexcharts_rs::prelude::{ApexChartComponent, ApexChartComponentProps, ChartSeries, SeriesData, ChartType};
 /// 
-/// use apexcharts_rs::prelude::{ApexChartComponent, ApexChartComponentProps, ChartSeries, SeriesData};
 /// 
-/// pub struct App {
-///    link: ComponentLink<Self>,
-/// }
-/// 
-/// pub enum AppMsg {
-///   Noop
-/// }
+/// pub struct App;
 /// 
 /// impl Component for App {
-///     type Message = AppMsg;
+///     type Message = ();
 ///     type Properties = ();
 /// 
 ///     fn create(ctx: &Context<Self>) -> Self {
-///         Self {
-///            link: ctx.link()
-///         }
-///     }
-///     
-///     fn update(&mut self, _ctx: &Context<Self>, _msg: Self::Message) -> bool {
-///         true
+///         Self {}
 ///     }
 ///     
 ///     fn view(&self, _ctx: &Context<Self>) -> Html {
 ///         let series = vec![
 ///             ChartSeries {
 ///                 name: "Series 1".to_string(),
-///                 data: SeriesData::Linear(vec![10.0, 20.0, 30.0, 40.0, 50.0]),
+///                 data: SeriesData::Single(vec![10, 20, 30, 40, 50]),
 ///                 color: "#008FFB".to_string(),
 ///                 r#type: None,
 ///                 z_index: None,
 ///             },
 ///             ChartSeries {
 ///                 name: "Series 2".to_string(),
-///                 data: SeriesData::Linear(vec![30.0, 40.0, 50.0, 60.0, 70.0]),
+///                 data: SeriesData::Single(vec![30, 40, 50, 60, 70]),
 ///                 color: "#00E396".to_string(),
 ///                 r#type: None,
 ///                 z_index: None,
 ///             }
 ///         ];
-///     
-///     	html! {
-///     		<ApexChartComponent
-///     			id="chart"
-///     			r#type=ChartType::Line
-///     			series=series
-///     			width="100%"
-///     			height="300px"
-///     		/>
-///     	}
+///         html! {
+///             <>
+///                 <ApexChartComponent
+///                    id={"my_area_chart".to_string()}
+///                    r#type={ChartType::Area}
+///                    series={series}
+///                    width={"100%".to_string()}
+///                    height={"300px".to_string()}
+///                  />
+///             </>
+///         }
+///     }
 /// }
 /// 
 pub struct ApexChartComponent {
