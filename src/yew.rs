@@ -7,7 +7,7 @@ use crate::prelude::{ApexChart, ChartSeries, ChartType, SeriesData};
 /// An ApexCharts component for Yew. 
 /// 
 /// This component is used to render an ApexCharts chart in a Yew application. It is used to render different types of charts
-/// such as line, bar, pie, donut, and radial bar charts. To use this component, you need to enable the `yew-component` feature
+/// such as line, bar, pie, donut, and radial bar charts. To use this component, you need to enable the `yew` feature
 /// in the `apexcharts-rs` crate. 
 /// 
 /// 
