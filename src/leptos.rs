@@ -47,14 +47,20 @@ use crate::prelude::{ApexChart, ChartSeries, ChartType};
 /// 
 #[component]
 pub fn ApexChartComponent(
+	/// The type of the chart.
 	#[prop(default = ChartType::Line)]
 	r#type: ChartType,
+	/// The options for the chart in json.
 	#[prop(default = "".to_string())]
 	options: String,
+	/// The unique id of the chart.
 	id: String,
+	/// The series to be rendered in the chart.
 	series: ReadSignal<Vec<ChartSeries>>,
+	/// The width of the chart.
 	#[prop(default = "100%".to_string())]
 	width: String,
+	/// The height of the chart.
 	#[prop(default = "auto".to_string())]
 	height: String
 ) -> impl IntoView {
