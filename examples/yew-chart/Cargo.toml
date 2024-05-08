@@ -3,11 +3,9 @@ name = "yew-chart"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 wasm-bindgen = "0.2.92"
 web-sys = { version = "0.3.69", features = ["console"]}
 console = "0.15.8"
 yew = { version="0.21.0", features = ["csr"] }
-apexcharts-rs = {path = "../../../apexcharts-rs", features = ["yew-component"]}
+apexcharts-rs = {path = "../../../apexcharts-rs", features = ["yew"]}
