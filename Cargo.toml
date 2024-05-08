@@ -16,7 +16,7 @@ crate-type = ["cdylib", "rlib"]
 [features]
 default = []
 yew-component = ["yew", "gloo"]
-leptos = ["leptos/default"]
+leptos = ["dep:leptos"]
 
 [dependencies]
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
