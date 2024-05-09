@@ -10,15 +10,16 @@ keywords = ["apexcharts", "wasm-charts", "visualization", "yew-charts", "leptos-
 license = "Apache-2.0"
 categories = ["wasm", "web-programming", "visualization"]
 readme = "README.md"
+rust-version = "1.71.0"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 [features]
 default = []
-### This feature enables the leptos chart components 
+# This feature enables the leptos chart components.
 leptos = ["dep:leptos"]
-### This feature enables the yew chart components
+# This feature enables the yew chart components.
 yew = ["dep:yew", "dep:gloo"]
 
 [dependencies]
