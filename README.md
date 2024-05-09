@@ -104,6 +104,10 @@ The components can be exposed for use by enabling features depending on the fram
             </div>
         }
     }
+    
+    pub fn main() {
+      yew::Renderer::<MyApp>::new().render();
+    }
     ```
 
 - ### Leptos
@@ -196,6 +200,10 @@ The components can be exposed for use by enabling features depending on the fram
                 />
             </div>
         }
+    }
+    
+    pub fn main() {
+      mount_to_body(MyApp);
     }
     ```
 
