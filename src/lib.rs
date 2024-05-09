@@ -102,6 +102,7 @@ mod yew;
 mod leptos;
 
 pub mod prelude {
+	//! Re-exports commonly used items.
 	pub use crate::bindings::ApexChart;
 	pub use crate::options::{ChartType, ChartSeries, SeriesData, to_jsvalue};
 	#[cfg(feature = "yew")]

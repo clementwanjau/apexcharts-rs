@@ -1,3 +1,5 @@
+//! This module contains the Yew component for rendering ApexCharts in a Yew application.
+
 use wasm_bindgen::JsValue;
 use gloo::timers::callback::Timeout;
 use serde_json::Value;
@@ -70,14 +72,21 @@ pub enum ApexChartComponentMsg {
 
 #[derive(Clone, Debug, Properties, PartialEq)]
 pub struct ApexChartComponentProps {
+	/// The type of the chart.
 	#[prop_or(ChartType::Line)]
 	pub r#type: ChartType,
+	/// The options for the chart in json. These options are used to customize the chart. Refer to the 
+	/// [ApexCharts documentation](https://apexcharts.com/docs/options/) for more information.
 	#[prop_or("".into())]
 	pub options: String,
+	/// The unique id of the chart. This is used to identify the chart in the DOM.
 	pub id: String,
+	/// The series to be rendered in the chart. This is used to set the data that will be rendered in the chart.
 	pub series: Vec<ChartSeries>,
+	/// The width of the chart. This is used to set the width of the chart.
 	#[prop_or("100%".to_string())]
 	pub width: String,
+	/// The height of the chart. This is used to set the height of the chart.
 	#[prop_or("auto".to_string())]
 	pub height: String,
 }

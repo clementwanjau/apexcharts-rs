@@ -9,22 +9,37 @@ use wasm_bindgen_futures::js_sys;
 /// Represents the type of the chart that will be rendered.
 #[derive(Clone, Debug, PartialEq, Deserialize)]
 pub enum ChartType {
+	/// Represents an area chart.
 	Area,
+	/// Represents a bar chart.
 	Bar,
+	/// Represents a line chart.
 	Line,
-	Column,
+	/// Represents a Boxplot chart.
 	BoxPlot,
+	/// Represents a candlestick chart.
 	CandleStick,
+	/// Represents a range bar chart.
 	RangeBar,
+	/// Represents a range area chart.
 	RangeArea,
+	/// Represents a heatmap chart.
 	HeatMap,
+	/// Represents a treemap chart.
 	Treemap,
+	/// Represents a funnel chart.
 	Funnel,
+	/// Represents a multi-axis chart.
 	MultiAxis,
+	/// Represents a pie chart. The expected type of data is [SeriesData::Radial].
 	Pie,
+	/// Represents a donut chart. The expected type of data is [SeriesData::Radial].
 	Donut,
+	/// Represents a radar chart.
 	Radar,
+	/// Represents a radial bar chart. The expected type of data is [SeriesData::Radial].
 	RadialBar,
+	/// Represents a circular gauge chart. The expected type of data is [SeriesData::Radial].
 	CircularGauge,
 }
 
@@ -34,7 +49,6 @@ impl Display for ChartType {
 			ChartType::Area => write!(f, "area"),
 			ChartType::Bar => write!(f, "bar"),
 			ChartType::Line => write!(f, "line"),
-			ChartType::Column => write!(f, "column"),
 			ChartType::BoxPlot => write!(f, "boxPlot"),
 			ChartType::CandleStick => write!(f, "candlestick"),
 			ChartType::RangeBar => write!(f, "rangeBar"),
@@ -91,7 +105,7 @@ impl Serialize for SeriesData {
 				}
 				seq.end()
 			}
-			SeriesData::NumericPaired(data) => {
+			SeriesData::NumericPaired(data) | SeriesData::Timestamped(data) => {
 				let mut seq = serializer.serialize_seq(Some(data.len()))?;
 				let data = data.iter().map(|(x, y)| vec![*x, *y]).collect::<Vec<_>>();
 				for item in data {
@@ -99,10 +113,10 @@ impl Serialize for SeriesData {
 				}
 				seq.end()
 			}
-			SeriesData::CategoryPaired(data) => {
+			SeriesData::CategoryPaired(data) | SeriesData::Dated(data)  => {
 				// Serialize the data into a sequence of an object with two properties `x` and `y`. eg `[{x: "Apple", y: 30}, {x: "Banana", y: 40}]`
 				let mut seq = serializer.serialize_seq(Some(data.len()))?;
-				let data: Vec<IndexMap<String, serde_json::Value>> = data.iter().map(|(x, y)| {
+				let data: Vec<IndexMap<String, Value>> = data.iter().map(|(x, y)| {
 					IndexMap::from_iter(
 						vec![
 							("x".to_string(), Value::String(x.to_string())),
@@ -115,32 +129,9 @@ impl Serialize for SeriesData {
 				}
 				seq.end()
 			}
-			SeriesData::Timestamped(data) => {
-				let mut seq = serializer.serialize_seq(Some(data.len()))?;
-				let data = data.iter().map(|(x, y)| vec![*x, *y]).collect::<Vec<_>>();
-				for item in data {
-					seq.serialize_element(&item)?;
-				}
-				seq.end()
-			}
-			SeriesData::Dated(data) => {
-				let mut seq = serializer.serialize_seq(Some(data.len()))?;
-				let data: Vec<IndexMap<String, serde_json::Value>> = data.iter().map(|(x, y)| {
-					IndexMap::from_iter(
-						vec![
-							("x".to_string(), Value::String(x.to_string())),
-							("y".to_string(), Value::Number(serde_json::Number::from(*y)))
-						]
-					)
-				}).collect::<Vec<_>>();
-				for item in data {
-					seq.serialize_element(&item)?;
-				}
-				seq.end()
-			},
 			SeriesData::Radial(data) => {
 				let mut seq = serializer.serialize_seq(Some(data.len()))?;
-				let data: Vec<IndexMap<String, serde_json::Value>> = data.iter().map(|(x, y)| {
+				let data: Vec<IndexMap<String, Value>> = data.iter().map(|(x, y)| {
 					IndexMap::from_iter(
 						vec![
 							("x".to_string(), Value::String(x.to_string())),
@@ -166,11 +157,18 @@ impl Serialize for SeriesData {
 /// 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ChartSeries {
+	/// The name of the series. This is used to identify the series in the chart. It is also displayed in the legend.
 	pub name: String,
+	/// The data that will be rendered in the chart. Different types of charts require different types of data.
 	pub data: SeriesData,
+	/// The color of the series. This is used to set the color of the series in the chart.
 	pub color: String,
+	/// The type of the series. This is used to set the type of the series in the chart. Note that this 
+	/// overrides the type of the chart provided in the `ApexChartComponent` component. Usually, you don't need to set this.
 	#[serde(skip_serializing_if = "Option::is_none")]
 	pub r#type: Option<ChartType>,
+	/// The z-index of the series. This is used to set the z-index of the series in the chart. It is used to determine
+	/// the order in which the series are rendered in the chart. The series with the highest z-index is rendered on top.
 	#[serde(skip_serializing_if = "Option::is_none")]
 	pub z_index: Option<i32>,
 }
@@ -190,6 +188,7 @@ impl From<ChartSeries> for JsValue {
 	}
 }
 
+/// A helper function to convert a vector of items into a JsValue.
 pub fn to_jsvalue<T: Into<JsValue>>(vec: Vec<T>) -> JsValue {
 	let array = js_sys::Array::new();
 	for item in vec {

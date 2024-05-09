@@ -1,3 +1,5 @@
+//! This module contains the Leptos component for rendering ApexCharts in a Leptos application.
+//! 
 use leptos::*;
 use wasm_bindgen::{ JsValue};
 use serde_json::Value;
