@@ -111,6 +111,8 @@ The components can be exposed for use by enabling features depending on the fram
     ```
 
 - ### Leptos
+  ApexCharts supports leptos both in CSR (client side rendering) and SSR (server side rendering) mode. To use the library in a leptos project, you need to enable the `leptos` feature.
+
     ```toml
     [dependencies]
     apexcharts-rs = { version="0.1", features=["leptos"] }
