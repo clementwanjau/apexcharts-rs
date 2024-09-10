@@ -10,10 +10,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Install Cargo Hack
+        uses: taiki-e/install-action@cargo-hack
       - name: Build
-        run: cargo build --release
-      - name: Test
-        run: cargo test --verbose
+        run: cargo hack build --target wasm32-unknown-unknown --lib --tests --examples --feature-powerset --mutually-exclusive-features yew,leptos
       - name: Publish
         run: cargo publish
         env:
