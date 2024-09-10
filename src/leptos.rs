@@ -1,10 +1,8 @@
 //! This module contains the Leptos component for rendering ApexCharts in a Leptos application.
 //! 
 use leptos::*;
-use wasm_bindgen::{ JsValue};
-use serde_json::Value;
-use crate::options::SeriesData;
-use crate::prelude::{ApexChart, ChartSeries, ChartType};
+use wasm_bindgen::JsValue;
+use crate::prelude::{ChartSeries, ChartType};
 
 /// An ApexCharts component for Leptos. 
 ///
@@ -66,66 +64,69 @@ pub fn ApexChartComponent(
 	#[prop(default = "auto".to_string())]
 	height: String
 ) -> impl IntoView {
-	let mut labels_data = None;
-	let series_data = match r#type {
-		ChartType::Pie | ChartType::Donut | ChartType::RadialBar => {
-			let chart_series = series.get();
-			let chart_serie = chart_series.first().unwrap();
-			match chart_serie.data {
-				SeriesData::Radial(ref data) => {
-					let data_values = data.iter().map(|(_, y)| *y).collect::<Vec<_>>();
-					labels_data = Some(data.iter().map(|(x, _)| x.clone()).collect::<Vec<_>>());
-					serde_json::to_value(data_values).unwrap()
-				},
-				_=> {
-					serde_json::to_value(series.get()).unwrap()
-				}
-			}
-		},
-		_=> {
-			serde_json::to_value(series.get()).unwrap()
-		}
-	};
-	let options = if options.is_empty() {
-		format!(
-			r#"{{
-				"chart": {{
-					"type": "{}",
-					"width": "{}",
-					"height": "{}"
-				}},
-				"series": {}
-				{}
-			}}"#,
-			r#type,
-			width,
-			height,
-			series_data,
-			if let Some(labels) = labels_data {
-				format!(r#","labels": {}"#, serde_json::to_string(&labels).unwrap())
-			} else {
-				"".to_string()
-			}
-		)
-	} else {
-		let mut options = serde_json::from_str::<Value>(&options).unwrap();
-		options["chart"]["type"] = Value::String(r#type.to_string());
-		options["chart"]["width"] = Value::String(width.clone());
-		options["chart"]["height"] = Value::String(height.clone());
-		options["series"] = series_data;
-		if let Some(labels) = labels_data {
-			options["labels"] = Value::Array(
-				labels
-					.iter()
-					.map(|label| Value::String(label.clone()))
-					.collect()
-			);
-		}
-		serde_json::to_string(&options).unwrap()
-	};
-	let chart = ApexChart::new(&JsValue::from_str(&options));
 	let id_clone = id.clone();
 	create_effect(move |_| {
+		use serde_json::Value;
+		use crate::prelude::{SeriesData, ApexChart};
+		
+		let mut labels_data = None;
+		let series_data = match r#type {
+			ChartType::Pie | ChartType::Donut | ChartType::RadialBar => {
+				let chart_series = series.get();
+				let chart_serie = chart_series.first().unwrap();
+				match chart_serie.data {
+					SeriesData::Radial(ref data) => {
+						let data_values = data.iter().map(|(_, y)| *y).collect::<Vec<_>>();
+						labels_data = Some(data.iter().map(|(x, _)| x.clone()).collect::<Vec<_>>());
+						serde_json::to_value(data_values).unwrap()
+					},
+					_=> {
+						serde_json::to_value(series.get()).unwrap()
+					}
+				}
+			},
+			_=> {
+				serde_json::to_value(series.get()).unwrap()
+			}
+		};
+		let options = if options.is_empty() {
+			format!(
+				r#"{{
+					"chart": {{
+						"type": "{}",
+						"width": "{}",
+						"height": "{}"
+					}},
+					"series": {}
+					{}
+				}}"#,
+				r#type,
+				width,
+				height,
+				series_data,
+				if let Some(labels) = labels_data {
+					format!(r#","labels": {}"#, serde_json::to_string(&labels).unwrap())
+				} else {
+					"".to_string()
+				}
+			)
+		} else {
+			let mut options = serde_json::from_str::<Value>(&options).unwrap();
+			options["chart"]["type"] = Value::String(r#type.to_string());
+			options["chart"]["width"] = Value::String(width.clone());
+			options["chart"]["height"] = Value::String(height.clone());
+			options["series"] = series_data;
+			if let Some(labels) = labels_data {
+				options["labels"] = Value::Array(
+					labels
+						.iter()
+						.map(|label| Value::String(label.clone()))
+						.collect()
+				);
+			}
+			serde_json::to_string(&options).unwrap()
+		};
+		let chart = ApexChart::new(&JsValue::from_str(&options));
 		chart.render(&id_clone);
 	});
 	view! {
