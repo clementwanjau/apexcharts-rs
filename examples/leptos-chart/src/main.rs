@@ -137,10 +137,10 @@ fn App() -> impl IntoView {
 	view! {
 		<>
 		<div class="p-4 text-center">
-			<h1 class="text-3xl font-bold p-4">{"ApexCharts for Leptos"}</h1>
+			<h1 class="text-3xl font-bold p-4">{"ApexCharts for Leptos CSR"}</h1>
 		</div>
 		<div class="flex flex-row p-4 flex-wrap">
-                <div class="w-1/4 p-4">
+                <div class="w-1/4 p-4 flex">
                     <div class="flex flex-col flex-wrap">
                         <h1 class="text-xl font-bold mb-2">{"Area chart."}</h1>
                         <p class="text-gray-500 overflow-x-auto mb-2">{"This is an example of an area chart. This is achieved by setting the "} <code class="bg-gray-100 px-2 rounded">{"type"}</code> {" of the chart to "} <code class="bg-gray-100 px-2 rounded">{"ChartType::Area"}</code></p>
@@ -150,7 +150,7 @@ fn App() -> impl IntoView {
                             id={"chart1".to_string()}
                             series={series}
                         />
-                        <pre class="bg-gray-100 p-4">
+                        <pre class="bg-gray-100 p-4 grow">
                             <code class="text-sm text-gray-500 whitespace-pre">{
 r#"<ApexChartComponent
     options={options.to_string()}
@@ -160,7 +160,7 @@ r#"<ApexChartComponent
                         </pre>
                     </div>
                 </div>
-                <div class="w-1/4 p-4">
+                <div class="w-1/4 p-4 flex">
                     <div class="flex flex-col">
                         <h1 class="text-xl font-bold mb-2">{"Bar chart."}</h1>
                         <p class="text-gray-500 mb-2">{"This is an example of an Bar chart. This is achieved by setting the "} <code class="bg-gray-100 px-2 rounded">{"type"}</code> {" of the chart to "} <code class="bg-gray-100 px-2 rounded">{"ChartType::Bar"}</code></p>
@@ -258,7 +258,7 @@ r##"{
                             id={"chart2".to_string()}
                             series={multiple_series}
                         />
-                        <pre class="bg-gray-100 p-4">
+                        <pre class="bg-gray-100 p-4 grow">
                             <code class="text-sm text-gray-500 whitespace-pre">{
 r#"<ApexChartComponent
     options={options.to_string()}
@@ -268,7 +268,7 @@ r#"<ApexChartComponent
                         </pre>
                     </div>
                 </div>
-                <div class="w-1/4 p-4">
+                <div class="w-1/4 p-4 flex">
                     <div class="flex flex-col">
                         <h1 class="text-xl font-bold mb-2">{"Line chart."}</h1>
                         <p class="text-gray-500 mb-2">{"This is an example of an line chart. This is achieved by setting the "} <code class="bg-gray-100 px-2 rounded">{"type"}</code> {" of the chart to "} <code class="bg-gray-100 px-2 rounded">{"ChartType::Line"}</code></p>
@@ -278,7 +278,7 @@ r#"<ApexChartComponent
                             id={"chart3".to_string()}
                             series={multiple_series}
                         />
-                        <pre class="bg-gray-100 p-4">
+                        <pre class="bg-gray-100 p-4 grow">
                             <code class="text-sm text-gray-500 whitespace-pre">{
 r#"<ApexChartComponent
     options={options.to_string()}
@@ -288,7 +288,7 @@ r#"<ApexChartComponent
                         </pre>
                     </div>
                 </div>
-                <div class="w-1/4 p-4">
+                <div class="w-1/4 p-4 flex">
                     <div class="flex flex-col">
                         <h1 class="text-xl font-bold mb-2">{"Column chart."}</h1>
                         <p class="text-gray-500 mb-2">{"This is an example of an column chart. This is achieved by setting the "} <code class="bg-gray-100 px-2 rounded">{"type"}</code> {" of the chart to "} <code class="bg-gray-100 px-2 rounded">{"ChartType::Bar"} </code>  {"and set the "} <code  class="bg-gray-100 px-2 rounded"> {"plotOptions.bar.horizontal"}</code>  {" option to"} <code class="bg-gray-100 px-2 rounded"> {"false"} </code></p>
@@ -339,7 +339,7 @@ r##"{
                             id={"chart4".to_string()}
                             series={category_paired_series}
                         />
-                        <pre class="bg-gray-100 p-4 h-64 overflow-y-scroll">
+                        <pre class="bg-gray-100 p-4 h-64 overflow-y-scroll grow">
                             <code class="text-sm text-gray-500 whitespace-pre">{
 r###"<ApexChartComponent
     options={
