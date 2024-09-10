@@ -68,25 +68,31 @@ pub fn ApexChartComponent(
 	create_effect(move |_| {
 		use serde_json::Value;
 		use crate::prelude::{SeriesData, ApexChart};
-		
+
 		let mut labels_data = None;
 		let series_data = match r#type {
 			ChartType::Pie | ChartType::Donut | ChartType::RadialBar => {
 				let chart_series = series.get();
-				let chart_serie = chart_series.first().unwrap();
-				match chart_serie.data {
-					SeriesData::Radial(ref data) => {
-						let data_values = data.iter().map(|(_, y)| *y).collect::<Vec<_>>();
-						labels_data = Some(data.iter().map(|(x, _)| x.clone()).collect::<Vec<_>>());
-						serde_json::to_value(data_values).unwrap()
+				match chart_series.first() {
+					Some(chart_serie) => {
+						match chart_serie.data {
+							SeriesData::Radial(ref data) => {
+								let data_values = data.iter().map(|(_, y)| *y).collect::<Vec<_>>();
+								labels_data = Some(data.iter().map(|(x, _)| x.clone()).collect::<Vec<_>>());
+								serde_json::to_value(data_values).unwrap_or(Value::Array(vec![]))
+							},
+							_ => {
+								serde_json::to_value(series.get()).unwrap_or(Value::Array(vec![]))
+							}
+						}
 					},
 					_=> {
-						serde_json::to_value(series.get()).unwrap()
+						Value::Array(vec![])
 					}
 				}
 			},
 			_=> {
-				serde_json::to_value(series.get()).unwrap()
+				serde_json::to_value(series.get()).unwrap_or(Value::Array(vec![]))
 			}
 		};
 		let options = if options.is_empty() {
@@ -105,13 +111,13 @@ pub fn ApexChartComponent(
 				height,
 				series_data,
 				if let Some(labels) = labels_data {
-					format!(r#","labels": {}"#, serde_json::to_string(&labels).unwrap())
+					format!(r#","labels": {}"#, serde_json::to_string(&labels).unwrap_or("[]".to_string()))
 				} else {
 					"".to_string()
 				}
 			)
 		} else {
-			let mut options = serde_json::from_str::<Value>(&options).unwrap();
+			let mut options = serde_json::from_str::<Value>(&options).unwrap_or_else(|_| panic!("Invalid JSON: {}", options));
 			options["chart"]["type"] = Value::String(r#type.to_string());
 			options["chart"]["width"] = Value::String(width.clone());
 			options["chart"]["height"] = Value::String(height.clone());
@@ -124,7 +130,7 @@ pub fn ApexChartComponent(
 						.collect()
 				);
 			}
-			serde_json::to_string(&options).unwrap()
+			serde_json::to_string(&options).unwrap_or("".to_string())
 		};
 		let chart = ApexChart::new(&JsValue::from_str(&options));
 		chart.render(&id_clone);
