@@ -93,6 +93,8 @@
 //! To further customize the chart, you can set the `options` property to a JSON string containing the options for the chart.
 //! Kindly refer to the [ApexCharts documentation](https://apexcharts.com/docs/options/) for more information on the available options.
 
+#![allow(long_running_const_eval)] // This was added to suppress the warning about long-running const evaluation.
+
 mod options;
 mod bindings;
 
