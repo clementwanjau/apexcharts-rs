@@ -103,6 +103,10 @@ mod yew;
 #[cfg(feature = "leptos")]
 mod leptos;
 
+// Ensure that only one of the "yew" or "leptos" features is enabled to avoid clashing of the `ApexChartsComponent` type exported.
+#[cfg(all(feature = "yew", feature = "leptos"))]
+compile_error!("Only one of the \"yew\" or \"leptos\" features can be enabled at a time");
+
 pub mod prelude {
 	//! Re-exports commonly used items.
 	pub use crate::bindings::ApexChart;
