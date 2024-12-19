@@ -107,20 +107,28 @@ impl Component for ApexChartComponent {
 		let mut labels_data = None;
 		let series_data = match props.r#type {
 			ChartType::Pie | ChartType::Donut | ChartType::RadialBar => {
-				let chart_serie = props.series.first().unwrap();
-				match chart_serie.data {
-					SeriesData::Radial(ref data) => {
-						let data_values = data.iter().map(|(_, y)| *y).collect::<Vec<_>>();
-						labels_data = Some(data.iter().map(|(x, _)| x.clone()).collect::<Vec<_>>());
-						serde_json::to_value(data_values).unwrap()
+				match props.series.first()
+				{
+					Some(chart_serie) => {
+						match chart_serie.data {
+							SeriesData::Radial(ref data) => {
+								let data_values = data.iter().map(|(_, y)| *y).collect::<Vec<_>>();
+								labels_data = Some(data.iter().map(|(x, _)| x.clone()).collect::<Vec<_>>());
+								serde_json::to_value(data_values).unwrap_or_default()
+							},
+							_=> {
+								serde_json::to_value(&props.series).unwrap_or_default()
+							}
+						}
 					},
 					_=> {
-						serde_json::to_value(&props.series).unwrap()
+						Value::Array(vec![])
 					}
 				}
+				
 			},
 			_=> {
-				serde_json::to_value(&props.series).unwrap()
+				serde_json::to_value(&props.series).unwrap_or_default()
 			}
 		};
 		let options = if props.options.is_empty() {
@@ -145,7 +153,7 @@ impl Component for ApexChartComponent {
 				}
 			)
 		} else {
-			let mut options = serde_json::from_str::<serde_json::Value>(&props.options).unwrap();
+			let mut options = serde_json::from_str::<Value>(&props.options).unwrap();
 			options["chart"]["type"] = Value::String(props.r#type.to_string());
 			options["chart"]["width"] = Value::String(props.width.clone());
 			options["chart"]["height"] = Value::String(props.height.clone());
@@ -153,7 +161,7 @@ impl Component for ApexChartComponent {
 			if let Some(labels) = labels_data {
 				options["labels"] = Value::Array(labels.iter().map(|label| Value::String(label.clone())).collect());
 			}
-			serde_json::to_string(&options).unwrap()
+			serde_json::to_string(&options).unwrap_or_default()
 		};
 		Self {
 			chart: ApexChart::new(&JsValue::from_str(&options)),
