@@ -1,6 +1,6 @@
 //! This module contains the Leptos component for rendering ApexCharts in a Leptos application.
-//! 
-use leptos::*;
+//!
+use leptos::prelude::*;
 use wasm_bindgen::JsValue;
 use crate::prelude::{ChartSeries, ChartType};
 
@@ -51,7 +51,7 @@ pub fn ApexChartComponent(
 	#[prop(default = ChartType::Line)]
 	r#type: ChartType,
 	/// The options for the chart in json.
-	#[prop(default = "".to_string())]
+	#[prop(default = String::default())]
 	options: String,
 	/// The unique id of the chart.
 	id: String,
@@ -65,7 +65,7 @@ pub fn ApexChartComponent(
 	height: String
 ) -> impl IntoView {
 	let id_clone = id.clone();
-	create_effect(move |_| {
+	Effect::new(move |_| {
 		use serde_json::Value;
 		use crate::prelude::{SeriesData, ApexChart};
 
@@ -130,7 +130,7 @@ pub fn ApexChartComponent(
 						.collect()
 				);
 			}
-			serde_json::to_string(&options).unwrap_or("".to_string())
+			serde_json::to_string(&options).unwrap_or_default()
 		};
 		let chart = ApexChart::new(&JsValue::from_str(&options));
 		chart.render(&id_clone);
