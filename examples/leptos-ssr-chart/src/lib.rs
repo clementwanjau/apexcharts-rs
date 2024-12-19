@@ -1,3 +1,5 @@
+use leptos::prelude::*;
+
 pub mod app;
 
 #[cfg(feature = "hydrate")]
