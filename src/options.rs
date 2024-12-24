@@ -90,6 +90,8 @@ pub enum SeriesData {
 	Dated(Vec<(String, i64)>),
 	/// Represents a double array of data points which is a percentage adding up to 100. eg `[("Apple", 30.0), ("Banana", 40.0), ("Orange", 30.0)]`. It is used primarily for the `Pie`, `Donut`, and `Radial` chart types.
 	Radial(Vec<(String, f64)>),
+	/// Represents a double array of data points for a candlestick chart. eg `[("Sun", [10.0, 20.0, 5.0, 15.0]), ("Mon", [15.0, 25.0, 10.0, 20.0])]`. The data points are in the order of `[Open, High, Low, Close]`.
+	CandleStick(Vec<(String, Vec<f64>)>)
 }
 
 impl Serialize for SeriesData {
@@ -136,6 +138,21 @@ impl Serialize for SeriesData {
 						vec![
 							("x".to_string(), Value::String(x.to_string())),
 							("y".to_string(), Value::Number(serde_json::Number::from_f64(*y).unwrap()))
+						]
+					)
+				}).collect::<Vec<_>>();
+				for item in data {
+					seq.serialize_element(&item)?;
+				}
+				seq.end()
+			}
+			SeriesData::CandleStick(data) => {
+				let mut seq = serializer.serialize_seq(Some(data.len()))?;
+				let data: Vec<IndexMap<String, Value>> = data.iter().map(|(x, y)| {
+					IndexMap::from_iter(
+						vec![
+							("x".to_string(), Value::String(x.to_string())),
+							("y".to_string(), Value::Array(y.iter().map(|v| Value::Number(serde_json::Number::from_f64(*v).unwrap())).collect::<Vec<_>>()))
 						]
 					)
 				}).collect::<Vec<_>>();
