@@ -4,9 +4,10 @@ use wasm_bindgen::JsValue;
 use gloo::timers::callback::Timeout;
 use serde_json::Value;
 use yew::prelude::*;
-use crate::prelude::{ApexChart, ChartSeries, ChartType, SeriesData};
+use yew::props;
+use crate::prelude::{to_jsvalue, ApexChart, ChartSeries, ChartType, SeriesData};
 
-/// An ApexCharts component for Yew. 
+/// An ApexCharts component for Yew.
 /// 
 /// This component is used to render an ApexCharts chart in a Yew application. It is used to render different types of charts
 /// such as line, bar, pie, donut, and radial bar charts. To use this component, you need to enable the `yew` feature
@@ -62,12 +63,14 @@ use crate::prelude::{ApexChart, ChartSeries, ChartType, SeriesData};
 /// }
 /// 
 pub struct ApexChartComponent {
+	options: String,
 	chart: ApexChart,
 	_draw_timeout: Timeout,
 }
 
 pub enum ApexChartComponentMsg {
-	DrawChart
+	DrawChart,
+	OptionsUpdated(String)
 }
 
 #[derive(Clone, Debug, Properties, PartialEq)]
@@ -96,14 +99,14 @@ impl Component for ApexChartComponent {
 	type Properties = ApexChartComponentProps;
 
 	fn create(ctx: &Context<Self>) -> Self {
-		let link = ctx.link();
+		let link = ctx.link().clone();
+		let props = ctx.props().clone();
 		let stand_alone_timer = {
 			let link = link.clone();
 			Timeout::new(10, move||{
 				link.send_message(ApexChartComponentMsg::DrawChart);
 			})
 		};
-		let props = ctx.props().clone();
 		let mut labels_data = None;
 		let series_data = match props.r#type {
 			ChartType::Pie | ChartType::Donut | ChartType::RadialBar => {
@@ -163,9 +166,11 @@ impl Component for ApexChartComponent {
 			}
 			serde_json::to_string(&options).unwrap_or_default()
 		};
+		link.send_message(ApexChartComponentMsg::OptionsUpdated(options.clone()));
 		Self {
 			chart: ApexChart::new(&JsValue::from_str(&options)),
 			_draw_timeout: stand_alone_timer,
+			options,
 		}
 	}
 
@@ -175,12 +180,28 @@ impl Component for ApexChartComponent {
 				self.chart.render(&ctx.props().id.clone());
 				true
 			}
+			ApexChartComponentMsg::OptionsUpdated(options) => {
+				self.options = options;
+				true
+			}
 		}
 	}
+
+
 
 	fn view(&self, ctx: &Context<Self>) -> Html {
 		html! {
             <div id={ctx.props().id.clone()}></div>
         }
+	}
+
+	fn rendered(&mut self, ctx: &Context<Self>, first_render: bool) {
+		if !first_render {
+			if ctx.props().r#type == ChartType::Pie || ctx.props().r#type == ChartType::Donut || ctx.props().r#type == ChartType::RadialBar {
+				self.chart.update_options(&JsValue::from_str(&self.options), Some(true), Some(false), Some(true));
+			} else {
+				self.chart.update_series(&to_jsvalue(ctx.props().series.clone()), Some(false));
+			}
+		}
 	}
 }
